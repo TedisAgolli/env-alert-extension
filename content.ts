@@ -1,27 +1,39 @@
-import { Storage } from "@plasmohq/storage"
+import { Storage } from '@plasmohq/storage';
 
-const storage = new Storage()
+const storage = new Storage();
 
+let prodName: string | undefined, devName: string | undefined;
 storage.watch({
-  "prodName": (c) => {
-    console.log('prodName', c.newValue)
+  'prod': (c) => {
+    console.log('prodName', c.newValue);
+    prodName = c.newValue;
   },
-  make: (c) => {
-    console.log(c.newValue)
+  'dev': (c) => {
+    console.log('devName', c.newValue);
+    devName = c.newValue;
   }
-})
+});
 
-function startPolling() {
-  const interval = setInterval(() => {
-    const el = document.querySelector(".cfc-switcher-button") as HTMLElement
+async function startPolling() {
+  prodName = await storage.get('prod');
+  devName = await storage.get('dev');
+
+  let oldEl: HTMLElement;
+  setInterval(() => {
+    console.log('poll', prodName);
+    const el = document.querySelector<HTMLElement>('.cfc-switcher-button')!;
     if (el) {
-      if (el.innerText === "Security Products Main") {
-        el.style.border = "3px solid red"
-      } else if (el.innerText === "Security Products Dev Website") {
-        el.style.border = "3px solid green"
+      // clear what you set before in case the name is not found
+      oldEl = el;
+      oldEl.style.border = 'none';
+
+      if (el.innerText === prodName) {
+        el.style.border = '3px solid red';
+      } else if (el.innerText === devName) {
+        el.style.border = '3px solid green';
       }
     } else {
-      console.log("not found")
+      console.log('not found');
     }
   }, 1000);
 }
@@ -29,5 +41,4 @@ function startPolling() {
 // Start polling initially
 startPolling();
 
-
-export { }
+export {};

@@ -1,52 +1,69 @@
-import { useState } from "react"
-import "./style.css"
+import React, { useEffect, useState } from 'react';
 
-import debounce from "lodash.debounce"
-import { Storage } from "@plasmohq/storage"
-const storage = new Storage()
+import './style.css';
+
+import debounce from 'lodash.debounce';
+
+import { Storage } from '@plasmohq/storage';
+
+const storage = new Storage();
 
 function IndexPopup() {
-  const [prodName, setProdName] = useState<string>("")
-
   return (
-    <div
-      className='w-96 p-4'>
-      <h2>Never make accidental changes in Prod again!</h2>
-
-      <form >
-        <EnvName label='Prod' />
-        <EnvName label='Dev' />
-        <button
-          type="submit"
-          className="rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
-        >
-          Save
-        </button>
-      </form>
-    </div >
-  )
+    <div className="w-96 p-4 my-2">
+      <div className="mb-6">
+        <h1 className="font-semibold text-lg">Environment Names</h1>
+        <p className="text-sm text-slate-500">Never make accidental changes in prod again!</p>
+      </div>
+      <EnvName isProd={true} />
+      <EnvName isProd={false} />
+    </div>
+  );
 }
 
-function EnvName({ label }: { label: string }) {
+function EnvName({ isProd }: { isProd: boolean }) {
+  const [envName, setEnvName] = useState<string>('');
+  const envType = isProd ? 'prod' : 'dev';
+  useEffect(() => {
+    const getProdName = async () => {
+      const envInstanceName = await storage.get(envType);
+      if (envInstanceName) {
+        setEnvName(envInstanceName);
+      }
+    };
+
+    getProdName();
+  }, []);
+
   async function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const debouncedSetStorage = debounce(async (value: string) => {
-      await storage.set(`${label.toLowerCase()}Name`, value)
-    }, 300)
-    debouncedSetStorage(e.target.value)
+      await storage.set(envType, value);
+    }, 300);
+    debouncedSetStorage(e.target.value);
   }
 
   return (
-    <div className='flex justify-between items-center space-x-12 mt-2'>
-      <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900 align-middle">
-        {label} <div className='w-2 h-2 bg-red-600'></div>
-      </label>
+    <div className="flex items-center space-x-4 mb-2">
+      <div className="w-48 flex items-center justify-between">
+        <label
+          className="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          htmlFor={envName}
+        >
+          {isProd ? 'Production' : 'Development'}
+        </label>
+        <div className={`rounded border border-gray-200 ${isProd ? 'bg-red-600' : 'bg-green-500'} w-8 h-8`} />
+      </div>
+
       <input
         onChange={onChange}
-        placeholder="Name of environment"
+        defaultValue={envName}
+        placeholder={isProd ? 'Production' : 'Development'}
+        id={envName}
         className="w-64 rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
       />
+      {/* <Input className="w-[200px] text-center" id="development" placeholder="Development" /> */}
     </div>
-  )
+  );
 }
 
-export default IndexPopup
+export default IndexPopup;

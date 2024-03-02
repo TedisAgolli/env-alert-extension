@@ -20,7 +20,6 @@ async function startPolling() {
 
   let oldEl: HTMLElement;
   setInterval(() => {
-    console.log('poll', prodName);
     const el = document.querySelector<HTMLElement>('.cfc-switcher-button')!;
     if (el) {
       // clear what you set before in case the name is not found

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-
 import './style.css';
-
 import debounce from 'lodash.debounce';
-
 import { Storage } from '@plasmohq/storage';
+import iconImage from 'data-base64:~assets/icon.png';
 
 const storage = new Storage();
 
@@ -12,7 +10,10 @@ function IndexPopup() {
   return (
     <div className="w-96 p-4 my-2">
       <div className="mb-6">
-        <h1 className="font-semibold text-lg">Environment Names</h1>
+        <div className='flex items-center space-x-2 mb-2'>
+          <img src={iconImage} alt="Logo" className='w-8 h-8'/>
+          <h1 className="font-semibold text-lg">GCP Environment Names</h1>
+        </div>
         <p className="text-sm text-slate-500">Never make accidental changes in prod again!</p>
       </div>
       <EnvName isProd={true} />

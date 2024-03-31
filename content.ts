@@ -4,12 +4,10 @@ const storage = new Storage();
 
 let prodName: string | undefined, devName: string | undefined;
 storage.watch({
-  'prod': (c) => {
-    console.log('prodName', c.newValue);
+  prod: (c) => {
     prodName = c.newValue;
   },
-  'dev': (c) => {
-    console.log('devName', c.newValue);
+  dev: (c) => {
     devName = c.newValue;
   }
 });
@@ -26,13 +24,15 @@ async function startPolling() {
       oldEl = el;
       oldEl.style.border = 'none';
 
-      if (el.innerText === prodName) {
+      const elText = el.innerText.trim();
+
+      if (elText === prodName?.trim()) {
         el.style.border = '3px solid red';
-      } else if (el.innerText === devName) {
+      } else if (elText === devName?.trim()) {
         el.style.border = '3px solid green';
       }
     } else {
-      console.log('not found');
+      // do nothing
     }
   }, 1000);
 }

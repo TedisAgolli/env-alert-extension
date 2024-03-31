@@ -1,7 +1,7 @@
 {
   "name": "cloud-environment-highlighter",
   "displayName": "Cloud Environment Highlighter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mistake-proof your cloud game. We color-code the environment name—red for prod, green for dev—making it obvious where you're working",
   "author": "Tedis Agolli <hey@tedis.me>",
   "scripts": {
@@ -35,6 +35,8 @@
     "typescript": "^5.3.3"
   },
   "manifest": {
-    "permissions": ["https://console.cloud.google.com/*"]
+    "host_permissions": [
+      "https://console.cloud.google.com/*"
+    ]
   }
 }
